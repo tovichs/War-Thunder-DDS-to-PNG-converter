@@ -11,7 +11,7 @@ A simple Python desktop application that converts War Thunder `.dds` textures to
 ## Features
 
 - Batch convert `.dds` files to `.png`.
-- Drag-and-drop folder support or folder selector.
+- Folder selection.
 - One-click **Convert** button.
 - Preserves original `.dds` files.
 - Optimized for War Thunder textures.
