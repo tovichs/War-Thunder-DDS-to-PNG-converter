@@ -18,24 +18,5 @@ A simple Python desktop application that converts War Thunder `.dds` textures to
 
 ---
 
-## Screenshots
-
-**Select your folder and click Convert:**
-
-![App Screenshot 1](screenshots/screenshot1.png)
-
-**Converted PNG textures ready for Substance Painter:**
-
-![App Screenshot 2](screenshots/screenshot2.png)
 
 
-
----
-
-## Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/yourusername/dds-to-png-converter.git
-cd dds-to-png-converter
