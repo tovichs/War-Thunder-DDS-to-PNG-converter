@@ -7,19 +7,29 @@ from PIL import Image, ImageOps
 
 root = Tk()
 root.title("TexPorter")
-root.minsize(400,400)
-root.maxsize(400,400)
+root.minsize(500,500)
+root.maxsize(500,500)
 
 def updateProgressBar(increment):
-    
+
     try:
         maximum = float(progressbar["maximum"])
     except Exception:
         maximum = 100.0
 
-    new_value = progressbar["value"] + increment
+    try:
+        current = float(progressbar["value"])
+    except Exception:
+        current = 0.0
+
+    new_value = current + float(increment)
     
-    progressbar["value"] = new_value if new_value < maximum else maximum
+    if new_value > maximum:
+        new_value = maximum
+    if new_value < 0:
+        new_value = 0
+
+    progressbar["value"] = new_value
     root.update_idletasks()
 
 
@@ -47,28 +57,37 @@ def convertNormal(original):
 def convert(input_path, output_path):
 
     if (os.path.exists(input_path) and os.path.exists(output_path)):
-        number_of_files = 0
-        for file in glob.glob(input_path + '/*.dds'):
-            number_of_files = number_of_files + 1
-        onestep = float(0)
-        if(number_of_files>0):
-            onestep = 100/number_of_files
+
+        progressbar["value"] = 0
+        
+
+        files_to_process = (
+            glob.glob(input_path + "/*_c.dds") + 
+            glob.glob(input_path + "/*_c_uhq.dds") +
+            glob.glob(input_path + "/*_n*") +
+            glob.glob(input_path + "/*_n_uhq.dds") +
+            glob.glob(input_path + "/*_ao*")
+        )
+        number_of_files = len(files_to_process)
+        
+  
+        onestep = 100.0 / number_of_files if number_of_files > 0 else 0
         bar_var = onestep
-        for file in glob.glob(input_path + "/*_c.dds"):
+        for file in glob.glob(input_path + "/*_c.dds") + glob.glob(input_path + "/*_c_uhq.dds"):
             cfile = Image.open(file)
             newcfile = convertAlpha(cfile)
             name = os.path.basename(file).replace('.dds', '.png')
             newpath = os.path.join(output_path,name)
             newcfile.save(newpath)
             updateProgressBar(bar_var)
-        for file in glob.glob(input_path + "/*_n.dds"):
+        for file in glob.glob(input_path + "/*_n*") + glob.glob(input_path + "/*_n_uhq.dds"):
             nfile = Image.open(file)
             newnfile = convertNormal(nfile)
             name = os.path.basename(file).replace('.dds', '.png')
             newpath = os.path.join(output_path, name)
             newnfile.save(newpath)
             updateProgressBar(bar_var)
-        for file in glob.glob(input_path + "/*_ao.dds"):
+        for file in glob.glob(input_path + "/*_ao*"):
             aofile = Image.open(file)
             name = os.path.basename(file).replace('.dds', '.png')
             newpath = os.path.join(output_path, name)
@@ -109,8 +128,10 @@ convert_button = Button(master = mainframe, text = "Convert DDS to PNG", command
 convert_button.grid(row = 3, column = 1, pady=50, sticky=N+S+W+E)
 
 
-progressbar = ttk.Progressbar(orient=HORIZONTAL, length=160)
-progressbar.place(x = 230, y = 140)
+# Create a determinate progress bar with a defined maximum and initial value.
+# Put it inside mainframe and use grid (consistent with the rest of the layout).
+progressbar = ttk.Progressbar(master=mainframe, orient=HORIZONTAL, length=150, mode='determinate', maximum=100, value=0)
+progressbar.grid(row=3, column=2, padx=10, sticky="W")
 
     
 
