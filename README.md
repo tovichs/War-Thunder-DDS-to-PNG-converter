@@ -17,10 +17,10 @@ A simple Python desktop application that converts War Thunder `.dds` textures to
 - Optimized for War Thunder textures.
 
 ---
-https://imgur.com/LIUxB7w.png
+![untouched dds](https://imgur.com/LIUxB7w.png)
 
-https://imgur.com/CQXClsq
+![the app itself](https://imgur.com/CQXClsq.png)
 
-https://imgur.com/paqaGwy.png
+![processed pngs](https://imgur.com/paqaGwy.png)
 
 
