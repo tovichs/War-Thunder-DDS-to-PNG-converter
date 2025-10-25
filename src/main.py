@@ -74,25 +74,36 @@ def convert(input_path, output_path):
         onestep = 100.0 / number_of_files if number_of_files > 0 else 0
         bar_var = onestep
         for file in glob.glob(input_path + "/*_c.dds") + glob.glob(input_path + "/*_c_uhq.dds"):
-            cfile = Image.open(file)
-            newcfile = convertAlpha(cfile)
-            name = os.path.basename(file).replace('.dds', '.png')
-            newpath = os.path.join(output_path,name)
-            newcfile.save(newpath)
-            updateProgressBar(bar_var)
-        for file in glob.glob(input_path + "/*_n*") + glob.glob(input_path + "/*_n_uhq.dds"):
-            nfile = Image.open(file)
-            newnfile = convertNormal(nfile)
-            name = os.path.basename(file).replace('.dds', '.png')
-            newpath = os.path.join(output_path, name)
-            newnfile.save(newpath)
-            updateProgressBar(bar_var)
-        for file in glob.glob(input_path + "/*_ao*"):
-            aofile = Image.open(file)
-            name = os.path.basename(file).replace('.dds', '.png')
-            newpath = os.path.join(output_path, name)
-            aofile.save(newpath)
-            updateProgressBar(bar_var)
+            try:
+                cfile = Image.open(file)
+                newcfile = convertAlpha(cfile)
+                name = os.path.basename(file).replace('.dds', '.png')
+                newpath = os.path.join(output_path,name)
+                newcfile.save(newpath)
+                updateProgressBar(bar_var)
+            except Exception as e:
+                print(f"Problem with file {file}: {e}")
+        for file in glob.glob(input_path + "/*_n.dds") + glob.glob(input_path + "/*_n_uhq.dds"):
+            try:
+                nfile = Image.open(file)
+                newnfile = convertNormal(nfile)
+                name = os.path.basename(file).replace('.dds', '.png')
+                newpath = os.path.join(output_path, name)
+                newnfile.save(newpath)
+                updateProgressBar(bar_var)
+            except Exception as e:
+                print(f"Problem with file {file}: {e}")
+        for file in glob.glob(input_path + "/*_ao.dds"):
+            try:
+
+                aofile = Image.open(file)
+                name = os.path.basename(file).replace('.dds', '.png')
+                newpath = os.path.join(output_path, name)
+                aofile.save(newpath)
+                updateProgressBar(bar_var)
+            except Exception as e:
+                print(f"Problem with file {file}: {e}")
+                
 
             
     else:
