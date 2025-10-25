@@ -128,8 +128,7 @@ convert_button = Button(master = mainframe, text = "Convert DDS to PNG", command
 convert_button.grid(row = 3, column = 1, pady=50, sticky=N+S+W+E)
 
 
-# Create a determinate progress bar with a defined maximum and initial value.
-# Put it inside mainframe and use grid (consistent with the rest of the layout).
+
 progressbar = ttk.Progressbar(master=mainframe, orient=HORIZONTAL, length=150, mode='determinate', maximum=100, value=0)
 progressbar.grid(row=3, column=2, padx=10, sticky="W")
 
