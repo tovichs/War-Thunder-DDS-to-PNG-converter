@@ -40,10 +40,10 @@ def findDirectory(entry):
     entry.delete(0, END)
     entry.insert(0,directory)
 
-def convertAlpha(original):
+def convertAlbedo(original):
     r,g,b,a = original.split()
-    ra = ImageOps.invert(a)
-    newimg = Image.merge("RGBA", (r,g,b,ra))
+    fullwhite = Image.new(mode ="L", size= (original.width, original.height), color='white')
+    newimg = Image.merge("RGBA", (r,g,b, fullwhite))
     return newimg
 
 def convertNormal(original):
@@ -51,6 +51,15 @@ def convertNormal(original):
     fullwhite = Image.new(mode ="L", size= (original.width, original.height), color='white')
     newimg = Image.merge("RGB", (a,g,fullwhite))
     return newimg
+
+def extractAlphaFromCFile(original):
+    r,g,b,a = original.split()
+    # Just return the alpha channel directly, no need to merge
+    return a
+def extractMetallicFromNFile(original):
+    r,g,b,a = original.split()
+    return b
+
 
     
 
@@ -76,26 +85,43 @@ def convert(input_path, output_path):
         for file in glob.glob(input_path + "/*_c.dds") + glob.glob(input_path + "/*_c_uhq.dds"):
             try:
                 cfile = Image.open(file)
-                newcfile = convertAlpha(cfile)
+                newcfile = convertAlbedo(cfile)
                 name = os.path.basename(file).replace('.dds', '.png')
                 newpath = os.path.join(output_path,name)
                 newcfile.save(newpath)
+                
+                # Extract and save alpha channel separately
+                newalphafile = extractAlphaFromCFile(cfile)
+                alphaname = os.path.basename(file).replace('_c.dds','_a.png')
+                alphanewpath = os.path.join(output_path, alphaname)
+                newalphafile.save(alphanewpath)
+
                 updateProgressBar(bar_var)
             except Exception as e:
                 print(f"Problem with file {file}: {e}")
         for file in glob.glob(input_path + "/*_n.dds") + glob.glob(input_path + "/*_n_uhq.dds"):
             try:
                 nfile = Image.open(file)
+
+                newmfile = extractMetallicFromNFile(nfile)
+                mname = os.path.basename(file).replace('_n.dds','_m.png')
+                newmpath=os.path.join(output_path, mname)
+                newmfile.save(newmpath)
+
+                
+                
                 newnfile = convertNormal(nfile)
                 name = os.path.basename(file).replace('.dds', '.png')
                 newpath = os.path.join(output_path, name)
                 newnfile.save(newpath)
+
                 updateProgressBar(bar_var)
+
+             
             except Exception as e:
                 print(f"Problem with file {file}: {e}")
         for file in glob.glob(input_path + "/*_ao.dds"):
             try:
-
                 aofile = Image.open(file)
                 name = os.path.basename(file).replace('.dds', '.png')
                 newpath = os.path.join(output_path, name)
