@@ -42,8 +42,7 @@ def findDirectory(entry):
 
 def convertAlbedo(original):
     r,g,b,a = original.split()
-    fullwhite = Image.new(mode ="L", size= (original.width, original.height), color='white')
-    newimg = Image.merge("RGBA", (r,g,b, fullwhite))
+    newimg = Image.merge("RGB", (r,g,b))
     return newimg
 
 def convertNormal(original):
@@ -53,9 +52,19 @@ def convertNormal(original):
     return newimg
 
 def extractAlphaFromCFile(original):
-    r,g,b,a = original.split()
-    # Just return the alpha channel directly, no need to merge
-    return a
+    if(len(original.getbands())>3):
+        try:
+            r,g,b,a = original.split()
+            return a
+        except Exception as e:
+            print("Error 1: {e}")
+    else:
+        try:
+            newalpha=Image.new("L", size=(original.width,original.height), color='white')
+            newalpha=Image.merge("L",(newalpha))
+            return newalpha
+        except Exception as e:
+            print("Error 2 {e}")
 def extractMetallicFromNFile(original):
     r,g,b,a = original.split()
     return b
@@ -79,20 +88,22 @@ def convert(input_path, output_path):
         )
         number_of_files = len(files_to_process)
         
-  
+
         onestep = 100.0 / number_of_files if number_of_files > 0 else 0
         bar_var = onestep
         for file in glob.glob(input_path + "/*_c.dds") + glob.glob(input_path + "/*_c_uhq.dds"):
             try:
                 cfile = Image.open(file)
                 newcfile = convertAlbedo(cfile)
+                newcfile.getbands
                 name = os.path.basename(file).replace('.dds', '.png')
                 newpath = os.path.join(output_path,name)
                 newcfile.save(newpath)
+                #it gets the bands, if it has four bands it extracts, if it has three, it returns a black png
                 
-                # Extract and save alpha channel separately
                 newalphafile = extractAlphaFromCFile(cfile)
-                alphaname = os.path.basename(file).replace('_c.dds','_a.png')
+                
+                alphaname = os.path.basename(file).replace('_c.dds','_a.png').replace('_c_uhq.dds', '_a.png')
                 alphanewpath = os.path.join(output_path, alphaname)
                 newalphafile.save(alphanewpath)
 
