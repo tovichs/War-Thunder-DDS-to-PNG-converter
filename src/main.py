@@ -115,7 +115,7 @@ def convert(input_path, output_path):
                 nfile = Image.open(file)
 
                 newmfile = extractMetallicFromNFile(nfile)
-                mname = os.path.basename(file).replace('_n.dds','_m.png')
+                mname = os.path.basename(file).replace('_n.dds','_m.png').replace('_n_uhq.dds', '_m.png')
                 newmpath=os.path.join(output_path, mname)
                 newmfile.save(newmpath)
 
